@@ -1,0 +1,55 @@
+#!/bin/bash
+# Bulk commit
+# Commit multiple git repositories at once with the same commit message
+# Github: https://www.github.com/0x4248/dotfiles
+# By: 0x4248
+
+# Colours 
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+RESET='\033[0m'
+
+
+read -p "Commit message: " commit_message
+if [ ${#commit_message} -gt 50 ]; then
+    echo -e "${RED}Commit message is over 50 characters!${RESET}"
+    exit 1
+fi
+
+
+read -p "Sign off using --signoff? (y/n): " sign_off
+if [ $sign_off = "y" ]; then
+    sign_off="--signoff"
+else
+    sign_off=""
+fi
+
+read -p "Push to remote? (y/n): " push
+if [ $push = "y" ]; then
+    push="true"
+else
+    push="false"
+fi
+
+for d in */ ; do
+    cd $d
+    if [ -d ".git" ]; then
+        # check if there are any changes if not skip
+        if [ -z "$(git status --porcelain)" ]; then
+            echo -e "[${YELLOW} SKIP ${RESET}] $d"
+            cd ..
+            continue
+        fi 
+        echo -e "[${BLUE}  COMMIT ${RESET}] $d"
+        git add .
+        git commit -m "$commit_message" $sign_off
+        if [ $push = "true" ]; then
+            git push
+        fi
+    else
+        echo -e "[${YELLOW} SKIP ${RESET}] $d Not a git repository"
+    fi
+    cd ..
+done

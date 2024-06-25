@@ -1,0 +1,20 @@
+#/bin/bash
+# ls_scripts
+# List all scripts in ~/.scripts
+# Github: https://www.github.com/0x4248/dotfiles
+# By: 0x4248
+
+
+echo "Available scripts:"
+WORKING_DIR=$(pwd)
+cd ~/.scripts
+
+echo "\033[0;36m$(find . -maxdepth 1 -perm -111 -type f | tr -d './')\033[0m"
+cd $WORKING_DIR
+echo ""
+
+echo "Language | Count"
+echo "-------- | -----"
+echo "Python   | $(grep -l '^#!/usr/bin/python' ~/.scripts/* | wc -l| tr -d ' ')"
+echo "Bash     | $(grep -l '^#!/bin/bash' ~/.scripts/* | wc -l| tr -d ' ')"
+echo "Ruby     | $(grep -l '^#!/usr/bin/ruby' ~/.scripts/* | wc -l| tr -d ' ')"

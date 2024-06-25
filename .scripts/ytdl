@@ -1,0 +1,16 @@
+#!/usr/bin/python3
+# YT-Download
+# A simple script to download youtube videos using pytube
+# Github: https://www.github.com/0x4248/dotfiles
+# By: 0x4248
+
+from pytube import YouTube
+import sys
+
+if len(sys.argv) != 2:
+    print("Usage: " + sys.argv[0] + " <youtube-url>")
+    sys.exit(1)
+
+yt = YouTube(sys.argv[1])
+yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first().download()
+print("Downloaded " + yt.title)

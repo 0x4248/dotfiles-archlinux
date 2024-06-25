@@ -1,0 +1,134 @@
+#!/usr/bin/ruby
+# Generate project
+# Generate a project with a template
+# Github: https://www.github.com/0x4248/dotfiles
+# By: 0x4248
+
+RED="\033[0;31m"
+GREEN="\033[0;32m"
+YELLOW="\033[0;33m"
+BLUE="\033[0;34m"
+RESET="\033[0m"
+
+def ok(msg)
+    puts "[#{GREEN} OK #{RESET}] #{msg}"
+end
+
+def err(msg)
+    puts "[#{RED} ERR #{RESET}] #{msg}"
+end
+
+def warn(msg)
+    puts "[#{YELLOW} WARN #{RESET}] #{msg}"
+end
+
+
+def c(name)
+    ok "Generating C project"
+    Dir.mkdir(name)
+    Dir.mkdir("#{name}/src")
+    File.open("#{name}/src/main.c", "w") do |f|
+        f.write("#include <stdio.h>\n\nint main() {\n    printf(\"Hello, World!\\n\");\n    return 0;\n}")
+    end
+    File.open("#{name}/Makefile", "w") do |f|
+        f.write("CC=gcc\nCFLAGS=-Wall -Wextra -pedantic -std=c99\n\nall:\n\t$(CC) $(CFLAGS) src/main.c -o #{name}")
+    end
+    File.open("#{name}/README.md", "w") do |f|
+        f.write("# #{name}")
+    end
+end
+
+def cpp(name)
+    ok "Generating C++ project"
+    Dir.mkdir(name)
+    Dir.mkdir("#{name}/src")
+    File.open("#{name}/src/main.cpp", "w") do |f|
+        f.write("#include <iostream>\n\nint main() {\n    std::cout << \"Hello, World!\\n\" << std::endl;\n    return 0;\n}")
+    end
+    File.open("#{name}/Makefile", "w") do |f|
+        f.write("CC=g++\nCFLAGS=-Wall -Wextra -pedantic -std=c++11\n\nall:\n\t$(CC) $(CFLAGS) src/main.cpp -o #{name}")
+    end
+    File.open("#{name}/README.md", "w") do |f|
+        f.write("# #{name}")
+    end
+end
+
+def python(name)
+    ok "Generating Python project"
+    Dir.mkdir(name)
+    Dir.mkdir("#{name}/src")
+    File.open("#{name}/src/main.py", "w") do |f|
+        f.write("print(\"Hello, World!\")")
+    end
+    File.open("#{name}/README.md", "w") do |f|
+        f.write("# #{name}")
+    end
+end
+
+def rust(name)
+    ok "Generating Rust project"
+    Dir.mkdir(name)
+    File.open("#{name}/README.md", "w") do |f|
+        f.write("# #{name}")
+    end
+    ok "Running cargo init"
+    system("cd #{name} && cargo init --vcs none")
+end
+
+def javascript(name)
+    ok "Generating JavaScript project"
+    Dir.mkdir(name)
+    Dir.mkdir("#{name}/src")
+    File.open("#{name}/src/main.js", "w") do |f|
+        f.write("console.log(\"Hello, World!\");")
+    end
+    File.open("#{name}/README.md", "w") do |f|
+        f.write("# #{name}")
+    end
+    ok "Running npm init"
+    system("cd #{name} && npm init ")
+end
+
+
+
+print "What is the project name? "
+project_name = gets.chomp
+if project_name.empty?
+    err "Project name cannot be empty"
+    exit
+end
+
+if File.exist?(project_name)
+    err "Project already exists"
+    exit
+end
+
+print "Pick a language to generate: \n"
+print " 1) #{BLUE}C#{RESET}\n"
+print " 2) #{BLUE}C++#{RESET}\n"
+print " 3) #{BLUE}Python#{RESET}\n"
+print " 4) #{BLUE}Rust#{RESET}\n"
+print " 5) #{BLUE}JavaScript#{RESET}\n"
+print ": "
+lang = gets.chomp
+if lang.empty?
+    err "Language cannot be empty"
+    exit
+end
+
+if lang == "1"
+    c(project_name)
+elsif lang == "2"
+    cpp(project_name)
+elsif lang == "3"
+    python(project_name)
+elsif lang == "4"
+    rust(project_name)
+elsif lang == "5"
+    javascript(project_name)
+else
+    err "Invalid language"
+    exit
+end
+
+ok "Done!"

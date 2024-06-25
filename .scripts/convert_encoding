@@ -1,0 +1,18 @@
+#!/bin/bash
+# Convert encoding
+# Convert line endings of all files in the current directory to Unix format
+# Github: https://www.github.com/0x4248/dotfiles
+# By: 0x4248
+
+
+echo "Enter a file extension e.g: .txt, .sh, .py"
+read -p "File extension: " file_extension
+
+TOTAL_FILES=$(find . -type f -name "*.$file_extension" | wc -l)
+
+find . -type f -name "*.$file_extension" -print0 | while IFS= read -r -d '' file; do
+    echo "Converting line endings of $file to Unix format..."
+    dos2unix "$file"
+done
+
+echo "Converted $TOTAL_FILES files to Unix format"
